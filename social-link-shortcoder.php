@@ -6,7 +6,8 @@ Description: This plugin allows you to create <strong>customizable shortcodes</s
 Version: 1.0
 Author: Xen Beliaeva
 Author URI: https://xenbel.com/
-License: GPL2
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 */ 
 
 require_once('sociallink_shortcoder_manage_links_page.php');
@@ -104,6 +105,8 @@ function sociallink_shortcoder_admin_scripts() {
     wp_enqueue_style('main-sls-styles', plugin_dir_url(__FILE__) . 'css/main.css');
     wp_enqueue_style('font-awesome', plugin_dir_url(__FILE__) . 'css/fontawesome/css/all.min.css');
 
+    wp_enqueue_style('wp-color-picker');
+    wp_enqueue_script('wp-color-picker');
     wp_enqueue_media();
     wp_enqueue_script('sociallink-media-uploader', plugin_dir_url(__FILE__) . 'js/media-uploader.js', array('jquery'), null, true);
     wp_enqueue_script('sociallink-icon-picker', plugin_dir_url(__FILE__) . 'js/icon-picker.js', array('jquery'), null, true); 

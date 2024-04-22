@@ -12,8 +12,8 @@ function sociallink_shortcoder_edit_page() {
             $iconColor = $link['iconColor'] !== '' ? $link['iconColor'] : null;
             ?>
             <div class="wrap sls-wrapper">
-                <h2>Редактировать Социальную Ссылку</h2>
-                <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+                <h2>Edit Link</h2>
+                <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
                     <input type="hidden" name="action" value="update_social_link">
                     <input type="hidden" name="link_id" value="<?php echo esc_attr($id); ?>">
                     <?php wp_nonce_field('update_social_link_nonce', 'update_social_link_nonce_field'); ?>
@@ -33,9 +33,9 @@ function sociallink_shortcoder_edit_page() {
                                     <div id="image-preview" style="min-height: 50px;">
                                     <?php
                                         if (!empty($iconColor)) {
-                                            echo "<i style='font-size: 50px; color: " . htmlspecialchars($iconColor) . ";' class='" . htmlspecialchars($image) . "'></i>";
+                                            echo "<i style='font-size: 50px; color: " . esc_attr($iconColor) . ";' class='" . esc_attr($image) . "'></i>";
                                         } else {
-                                            echo "<img style='width: 50px;' src='" . htmlspecialchars($image) . "'></img>";
+                                            echo "<img style='width: 50px;' src='" . esc_url($image) . "' alt='social icon'>";
                                         }
                                     ?>
                                     </div>
@@ -52,8 +52,8 @@ function sociallink_shortcoder_edit_page() {
                                         </button>
                                     <?php endforeach; ?>
                                 </div>
-                                <div class='color-picker-container'>
-                                        <input type="text" id='icon-color' name="iconColor" value="<?php echo $iconColor;?>" class="icon-color-field" />
+                                <div class='color-picker-container'>  
+                                        <input type="text" id='icon-color' name="iconColor" value="<?php echo esc_attr($iconColor); ?>" class="icon-color-field" />
                                         <button type="button" id="confirm-icon-selection" class="button button-primary">Accept</button>
                                     </div>
                                 </div>
@@ -61,7 +61,7 @@ function sociallink_shortcoder_edit_page() {
                         </td>
                     </tr>
                     <th>Icon Size</th>
-                    <td><input type="number" name="icon-size" id="icon-size" class="small-text" value="<?php echo $link['iconSize'] ?>">px.
+                    <td><input type="number" name="icon-size" id="icon-size" class="small-text" value="<?php echo esc_attr($link['iconSize']); ?>">px.
                         <p class="description" id="tagline-description">Applies to single shortcode only</p>
                     </td> 
                     </table>
@@ -114,75 +114,7 @@ function handle_update_social_link() {
     }
 
     // Перенаправление обратно на страницу настроек
-    wp_redirect(admin_url('admin.php?page=sociallink-shortcoder'));
+    wp_redirect(esc_url(admin_url('admin.php?page=sociallink-shortcoder')));
     exit;
 }
 add_action('admin_post_update_social_link', 'handle_update_social_link');
-
-
-
-// function handle_update_social_link() {
-//     if (!isset($_POST['update_social_link_nonce_field']) || !wp_verify_nonce($_POST['update_social_link_nonce_field'], 'update_social_link_nonce')) {
-//         wp_die('Действие запрещено'); // Проверка nonce для безопасности
-//     }
-
-//     global $wpdb;
-//     $table_name = $wpdb->prefix . 'xb_social_links';
-
-//     // Получение и санитизация данных из формы
-//     $id = intval($_POST['link_id']); 
-//     $url = esc_url_raw($_POST['url']);
-//     $iconColor = sanitize_hex_color($_POST['iconColor']);
-//     $iconSize = isset($_POST['icon-size']) ? intval($_POST['icon-size']) : 24;
-//     $image = isset($_POST['image']) ? $_POST['image'] : '';
-
-//     $current_data = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE id = %d", $id), ARRAY_A);
-
-//     $data_to_update = [];
-//     if ($url !== $current_data['url']) {
-//         $data_to_update['url'] = $url;
-//     }
-//     if ($iconColor !== $current_data['iconColor']) {
-//         $data_to_update['iconColor'] = $iconColor;
-//     }
-//     if ($iconSize !== $current_data['iconSize']) {
-//         $data_to_update['iconSize'] = $iconSize;
-//     }
-//     if ($image && $image !== $current_data['image']) {
-//         if (preg_match('/^(fa[b|r|s] fa-[a-z\d-]+)$/i', $image)) {
-//             // Это класс иконки, не трогаем
-//         } else if (filter_var($image, FILTER_VALIDATE_URL)) {
-//             // Это URL изображения, применяем esc_url_raw
-//             $data_to_update['image'] = esc_url_raw($image);
-//         }
-//     }
-
-//     // Обновляем данные в базе, если есть изменения
-//     if (!empty($data_to_update)) {
-//         $wpdb->update($table_name, [
-//             'url' => $url,
-//             'image' => $image,
-//             'iconColor' => $iconColor,
-//             'iconSize' => $iconSize
-//         ], ['id' => $id]);
-//         // $wpdb->update($table_name, $data_to_update, ['id' => $id]);
-//     }
-
-
-
-//     // if (preg_match('/^(fa[b|r|s] fa-[a-z\d-]+)$/i', $image)) {
-//     //     // Это класс иконки, не трогаем
-//     // } else if (filter_var($image, FILTER_VALIDATE_URL)) {
-//     //     // Это URL изображения, применяем esc_url_raw
-//     //     $image = esc_url_raw($image);
-//     // } else {
-//     //     // Некорректный ввод, можно обработать ошибку или игнорировать значение
-//     // }
-
-
-
-//     // Перенаправление обратно на страницу настроек
-//     wp_redirect(admin_url('admin.php?page=sociallink-shortcoder'));
-//     exit;
-// }
-// add_action('admin_post_update_social_link', 'handle_update_social_link');

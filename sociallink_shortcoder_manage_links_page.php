@@ -82,16 +82,20 @@ function sociallink_shortcoder_manage_links_page() {
 
         <script type="text/javascript">
             function editLink(id) {
-                window.location.href = "<?php echo admin_url('admin.php?page=sociallink-shortcoder-edit&edit='); ?>" + id;
+                var baseUrl = "<?php echo esc_url_raw(admin_url('admin.php?page=sociallink-shortcoder-edit&edit=')); ?>";
+                window.location.href = baseUrl + id;
             }
             function deleteLink(id) {
                 if (confirm("Are you sure you want to delete this link?")) {
-                    window.location.href = "<?php echo admin_url('admin.php?page=sociallink-shortcoder&delete='); ?>" + id;
+                    var deleteUrl = "<?php echo esc_url_raw(admin_url('admin.php?page=sociallink-shortcoder&delete=')); ?>";
+                    window.location.href = deleteUrl + id;
                 }
             }
             document.getElementById('addNewLinkBtn').addEventListener('click', function() {
-                window.location.href = '<?php echo admin_url('admin.php?page=sociallink-shortcoder-add-new'); ?>';
+                var addUrl = "<?php echo esc_url_raw(admin_url('admin.php?page=sociallink-shortcoder-add-new')); ?>";
+                window.location.href = addUrl;
             });
+
             jQuery(document).ready(function($){
                 $('#master_background_picker').wpColorPicker();
             });

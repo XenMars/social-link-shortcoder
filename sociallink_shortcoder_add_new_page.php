@@ -1,4 +1,12 @@
 <?php
+ob_start();
+function sociallink_admin_notice_success() {
+    echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Social link saved successfully.', 'social-link-shortcoder') . '</p></div>';
+}
+
+function sociallink_admin_notice_failure() {
+    echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__('Failed to save social link.', 'social-link-shortcoder') . '</p></div>';
+}
 function sociallink_shortcoder_add_new_page() {
     global $wpdb;
     $table_name = $wpdb->prefix . 'xb_social_links';
@@ -52,16 +60,19 @@ function sociallink_shortcoder_add_new_page() {
         </form>
     </div>
 </div>
-<?php // Проверяем, была ли отправлена форма
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
-        // Проверка nonce для безопасности
-        if (check_admin_referer('save_social_link')) {
+<?php
+}
+add_action('admin_init', 'handle_social_link_form_submission');
 
-            // Очистка данных
+function handle_social_link_form_submission() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'xb_social_links';
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
+        if (check_admin_referer('save_social_link', '_wpnonce')) {
             $url = esc_url_raw($_POST['url']);
-            $iconColor = isset($_POST['iconColor']) ? sanitize_hex_color($_POST['iconColor']) : '#363b3f'; 
+            $iconColor = isset($_POST['iconColor']) ? sanitize_hex_color($_POST['iconColor']) : '#363b3f';
             $iconSize = isset($_POST['icon-size']) ? intval($_POST['icon-size']) : 24;
-            // Проверяем, установлен ли ключ 'image'
             $image = isset($_POST['image']) ? $_POST['image'] : '';
 
             if (preg_match('/^(fa[b|r|s] fa-[a-z\d-]+)$/i', $image)) {
@@ -72,7 +83,7 @@ function sociallink_shortcoder_add_new_page() {
             } else {
                 // Некорректный ввод, можно обработать ошибку или игнорировать значение
             }
-            // Подготовка данных для вставки в базу данных
+
             $data = [
                 'url' => $url,
                 'image' => $image,
@@ -80,23 +91,64 @@ function sociallink_shortcoder_add_new_page() {
                 'iconSize' => $iconSize
             ];
 
-            // Вставка данных в базу данных
-            $inserted = $wpdb->insert($table_name, $data);
-            // Перенаправление обратно на страницу настроек
-
-
-            // Проверяем успешность вставки
-            if ($inserted === false) {
-                echo '<div class="error"><p>Failed to save social link: ' . $wpdb->last_error . '</p></div>';
+            if (!$wpdb->insert($table_name, $data, array('%s', '%s', '%s', '%d'))) {
+            
+                add_action('admin_notices', 'sociallink_admin_notice_failure');
             } else {
-                echo '<div class="updated"><p>Social link saved successfully.</p></div>';
+                add_action('admin_notices', 'sociallink_admin_notice_success');
             }
         } else {
             echo '<div class="error"><p>Security check failed.</p></div>';
         }
-        wp_redirect(admin_url('admin.php?page=sociallink-shortcoder'));
-        exit;
-    } ?>
-
-<?php
+    }
 }
+//     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
+//         // Проверка nonce для безопасности
+//         if (check_admin_referer('save_social_link')) {
+
+//             // Очистка данных
+//             $url = esc_url_raw($_POST['url']);
+//             $iconColor = isset($_POST['iconColor']) ? sanitize_hex_color($_POST['iconColor']) : '#363b3f'; 
+//             $iconSize = isset($_POST['icon-size']) ? intval($_POST['icon-size']) : 24;
+//             // Проверяем, установлен ли ключ 'image'
+//             $image = isset($_POST['image']) ? $_POST['image'] : '';
+
+//             if (preg_match('/^(fa[b|r|s] fa-[a-z\d-]+)$/i', $image)) {
+//                 // Это класс иконки, не трогаем
+//             } else if (filter_var($image, FILTER_VALIDATE_URL)) {
+//                 // Это URL изображения, применяем esc_url_raw
+//                 $image = esc_url_raw($image);
+//             } else {
+//                 // Некорректный ввод, можно обработать ошибку или игнорировать значение
+//             }
+//             // Подготовка данных для вставки в базу данных
+//             $data = [
+//                 'url' => $url,
+//                 'image' => $image,
+//                 'iconColor' => $iconColor,
+//                 'iconSize' => $iconSize
+//             ];
+
+//             if ($wpdb->insert(
+//                 $table_name,
+//                 array(
+//                     'url' => $url,
+//                     'image' => $image,
+//                     'iconColor' => $iconColor,
+//                     'iconSize' => $iconSize
+//                 ),
+//                 array('%s', '%s', '%s', '%d') // Format specifiers for each column value
+//             ) === false) {
+//                 add_action('admin_notices', 'sociallink_admin_notice_failure');
+//             } else {
+//                 add_action('admin_notices', 'sociallink_admin_notice_success');
+//             }
+            
+//             if (!isset($_POST['_wpnonce']) || !wp_verify_nonce($_POST['_wpnonce'], 'save_social_link')) {
+//                 echo '<div class="error"><p>Security check failed.</p></div>';
+//             }
+//         }
+//     }
+// }
+
+ob_end_flush();

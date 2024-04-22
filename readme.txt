@@ -1,10 +1,12 @@
 === SocialLink Shortcoder ===
 Contributors: Xen Beliaeva
-Donate link:
-Tags: easy social icons, easy social icon, social icons, social share, follow us, custom social icons, social media icons
-Requires at least: 3.5
+Donate link: https://xenbel.com/
+Tags: social link shortcode, social icon shortcode, social icons, social share, follow us, custom social icons, social media icons
+Requires at least: 5.5
 Tested up to: 6.5
+Requires PHP: 8.0
 Stable tag: 1.0
+
 
 Upload your own icons for social networks or select from the Font Awesome collection. Position these icons anywhere within your theme, including the sidebar, header, footer, or any page. Use individual shortcodes for each icon or a master shortcode to display all icons at once.
 
