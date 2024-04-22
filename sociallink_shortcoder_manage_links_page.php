@@ -208,5 +208,3 @@ function mastersociallinks_shortcode_handler($atts) {
     return $output;
 }
 add_shortcode('MasterSocialLinks', 'mastersociallinks_shortcode_handler');
-
-
