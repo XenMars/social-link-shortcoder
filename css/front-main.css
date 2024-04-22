@@ -1,0 +1,26 @@
+.master-social-links {
+    display: flex;
+    border-radius: 4px;
+    align-items: center;
+    width: fit-content;
+    padding: 8px;
+}
+
+.master-social-links > a,
+.sls-social-link {
+    text-decoration: none;
+    opacity: 0.85;
+    transition: all 0.15s ease;
+}
+
+.master-social-links > a:hover,
+.sls-social-link:hover {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+.master-social-links > a > span,
+.master-social-links > a > img  {
+    display: flex;
+}
+
